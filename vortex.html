@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>File vortex</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #fafaf7;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+      }
+      .stage {
+        width: 100%;
+        max-width: 520px;
+        padding: 32px;
+      }
+      svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <svg
+        id="vortex"
+        viewBox="0 0 500 480"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="File-extension vortex"
+      ></svg>
+    </div>
+
+    <script>
+      const SVG_NS = "http://www.w3.org/2000/svg";
+      const svg = document.getElementById("vortex");
+
+      // Side-view vortex geometry.
+      const cx = 250;
+      const topY = 50;
+      const bottomY = 425;
+      const startR = 200;
+      const endR = 22;
+      const totalTurns = 4.6;
+      const depthRatio = 0.22;
+
+      // Animation: how many full t-cycles per second.
+      // Each label takes 1/SPEED seconds to descend the full vortex.
+      const SPEED = 1 / 22; // ~22s per descent
+
+      const BG = "#fafaf7";
+
+      const labels = [
+        { ext: ".doc" },
+        { ext: ".html" },
+        { ext: ".js" },
+        { ext: ".css" },
+        { ext: ".xml" },
+        { ext: ".yaml" },
+        { ext: ".zip" },
+        { ext: ".log" },
+        { ext: ".gif" },
+        { ext: ".sql" },
+        { ext: ".txt" },
+        { ext: ".json" },
+        { ext: ".md" },
+        { ext: ".png" },
+        { ext: ".xlsx" },
+        { ext: ".pdf" },
+        { ext: ".csv" },
+      ];
+
+      function posAt(t) {
+        const theta = t * totalTurns * 2 * Math.PI;
+        const r = startR + (endR - startR) * t;
+        const yCenter = topY + (bottomY - topY) * t;
+        return {
+          x: cx + r * Math.cos(theta),
+          y: yCenter + r * depthRatio * Math.sin(theta),
+        };
+      }
+
+      // --- Spiral path (static — drawn once) ---
+      function buildSpiralPath() {
+        const steps = 800;
+        const parts = [];
+        for (let i = 0; i <= steps; i++) {
+          const t = i / steps;
+          const { x, y } = posAt(t);
+          parts.push(
+            (i === 0 ? "M " : "L ") + x.toFixed(1) + " " + y.toFixed(1)
+          );
+        }
+        return parts.join(" ");
+      }
+
+      const spiral = document.createElementNS(SVG_NS, "path");
+      spiral.setAttribute("d", buildSpiralPath());
+      spiral.setAttribute("fill", "none");
+      spiral.setAttribute("stroke", "#1a1a1a");
+      spiral.setAttribute("stroke-width", "1");
+      spiral.setAttribute("stroke-linecap", "round");
+      svg.appendChild(spiral);
+
+      // --- Labels (animated) ---
+      // Each label gets a fixed phase offset so the stream is evenly spaced;
+      // its current t = (offset + globalPhase) mod 1 advances over time.
+
+      labels.forEach((label, i) => {
+        label.offset = i / labels.length;
+
+        const group = document.createElementNS(SVG_NS, "g");
+
+        // White rect behind the text — masks the spiral line wherever the
+        // label happens to sit, since the path is solid and unbroken now.
+        const w = label.ext.length * 8 + 12;
+        const h = 22;
+        const rect = document.createElementNS(SVG_NS, "rect");
+        rect.setAttribute("x", (-w / 2).toFixed(1));
+        rect.setAttribute("y", (-h / 2).toFixed(1));
+        rect.setAttribute("width", w);
+        rect.setAttribute("height", h);
+        rect.setAttribute("fill", BG);
+        group.appendChild(rect);
+
+        const text = document.createElementNS(SVG_NS, "text");
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("dominant-baseline", "central");
+        text.setAttribute("font-size", "13");
+        text.setAttribute("font-weight", "600");
+        text.setAttribute("letter-spacing", "-0.3");
+        text.setAttribute("fill", "#1a1a1a");
+        text.textContent = label.ext;
+        group.appendChild(text);
+
+        svg.appendChild(group);
+        label.el = group;
+      });
+
+      // --- Animation loop ---
+
+      const reducedMotion = matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+
+      function frame(timeMs) {
+        const phase = ((timeMs / 1000) * SPEED) % 1;
+        const fade = 0.06;
+
+        for (const label of labels) {
+          let t = (label.offset + phase) % 1;
+          const { x, y } = posAt(t);
+
+          // Fade in near t=0, fade out near t=1.
+          let opacity = 1;
+          if (t < fade) opacity = t / fade;
+          else if (t > 1 - fade) opacity = (1 - t) / fade;
+
+          label.el.setAttribute(
+            "transform",
+            `translate(${x.toFixed(1)} ${y.toFixed(1)})`
+          );
+          label.el.setAttribute("opacity", opacity.toFixed(2));
+        }
+
+        requestAnimationFrame(frame);
+      }
+
+      if (reducedMotion) {
+        // Static placement at original t-values.
+        labels.forEach((label, i) => {
+          const t = 0.015 + (0.99 - 0.015) * (i / (labels.length - 1));
+          const { x, y } = posAt(t);
+          label.el.setAttribute(
+            "transform",
+            `translate(${x.toFixed(1)} ${y.toFixed(1)})`
+          );
+        });
+      } else {
+        requestAnimationFrame(frame);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: "Suisse Intl";
+        font-weight: 500;
+        src: url("../assets/fonts/suisseintl-medium/SuisseIntl-Medium-WebS.woff2")
+            format("woff2");
+      }
+      @font-face {
+        font-family: "Suisse Intl";
+        font-weight: 700;
+        src: url("../assets/fonts/suisseintl-bold/SuisseIntl-Bold-WebS.woff2")
+            format("woff2");
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 1200px;
+        height: 1200px;
+        background: #ffffff;
+        font-family: "Suisse Intl", -apple-system, sans-serif;
+        color: #0a0a0a;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .card {
+        position: relative;
+        width: 1200px;
+        height: 1200px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .text {
+        padding: 80px 80px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 56px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+      }
+
+      .brand-name {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+
+      .hero {
+        font-size: 104px;
+        font-weight: 500;
+        letter-spacing: -0.025em;
+        line-height: 0.9;
+      }
+
+      .image {
+        position: relative;
+        flex: 1;
+        margin-top: 40px;
+        background-image: url("../assets/island.webp");
+        background-position: center 35%;
+        background-size: 120% auto;
+        background-repeat: no-repeat;
+      }
+
+      .portal-glow {
+        position: absolute;
+        left: 50%;
+        top: 38%;
+        width: 26%;
+        height: 38%;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(
+          ellipse at center,
+          rgba(255, 100, 220, 0.85) 0%,
+          rgba(248, 102, 251, 0.45) 25%,
+          rgba(248, 102, 251, 0.12) 55%,
+          transparent 100%
+        );
+        filter: blur(24px);
+        mix-blend-mode: screen;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="text">
+        <div class="brand">
+          <svg class="brand-mark" viewBox="0 0 32 32" fill="currentColor">
+            <circle cx="24.5" cy="24.5" r="3" />
+            <circle cx="14.1" cy="26.4" r="2.6" />
+            <circle cx="5.6" cy="17.9" r="2.1" />
+            <circle cx="7.5" cy="7.5" r="2.1" />
+            <circle cx="17.9" cy="5.6" r="2.6" />
+            <circle cx="26.4" cy="14.1" r="3" />
+          </svg>
+          <span class="brand-name">Resident</span>
+        </div>
+
+        <h1 class="hero">AI that lives<br />with your data.</h1>
+      </div>
+
+      <div class="image">
+        <div class="portal-glow"></div>
+      </div>
+    </div>
+  </body>
+</html>
