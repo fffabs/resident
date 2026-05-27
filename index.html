@@ -186,7 +186,7 @@
       <section class="signup" aria-label="Sign up for updates">
         <form
           class="signup-card"
-          action="/api/subscribe"
+          action="https://app.loops.so/api/newsletter-form/cmpo76h8d014w0j0095x4vgdw"
           method="post"
           data-signup
         >
@@ -198,6 +198,7 @@
             autocomplete="email"
             required
           />
+          <input type="hidden" name="userGroup" value="Prelaunch" />
           <button type="submit" class="signup-button" data-signup-button>
             Be first in line
           </button>
@@ -252,21 +253,27 @@
           setLabel("Sending…");
 
           try {
-            const res = await fetch("/api/subscribe", {
+            const body = new URLSearchParams({ email, userGroup: "Prelaunch" });
+            const res = await fetch(form.action, {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email }),
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+              body,
             });
             const data = await res.json().catch(() => ({}));
+            const message = (data && data.message) || "";
 
-            if (res.ok && data.ok) {
-              setLabel(data.alreadySubscribed ? "You're already in" : "You're in", {
-                disable: true,
-              });
+            if (res.ok && data && data.success !== false) {
+              setLabel("You're in", { disable: true });
+              input.value = "";
+              reset();
+            } else if (/already/i.test(message)) {
+              setLabel("You're already in", { disable: true });
               input.value = "";
               reset();
             } else {
-              setLabel(data.error || "Try again", { disable: false });
+              setLabel(message || "Try again", { disable: false });
               reset(3500);
             }
           } catch (err) {
