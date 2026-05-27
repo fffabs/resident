@@ -7,5 +7,8 @@
 # Local Claude skills cache (not project files)
 skills/
 
-# Commercial fonts — Suisse Intl is licensed, do not redistribute
-assets/fonts/
+# Commercial fonts — ship only the woff/woff2 we actually use,
+# keep the redistributable formats (eot/ttf/svg) local.
+assets/fonts/**/*.eot
+assets/fonts/**/*.ttf
+assets/fonts/**/*.svg
