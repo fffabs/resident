@@ -184,7 +184,12 @@
       </div>
 
       <section class="signup" aria-label="Sign up for updates">
-        <form class="signup-card" action="#" method="post">
+        <form
+          class="signup-card"
+          action="/api/subscribe"
+          method="post"
+          data-signup
+        >
           <input
             type="email"
             name="email"
@@ -193,7 +198,9 @@
             autocomplete="email"
             required
           />
-          <button type="submit" class="signup-button">Be first in line</button>
+          <button type="submit" class="signup-button" data-signup-button>
+            Be first in line
+          </button>
         </form>
       </section>
     </main>
@@ -216,5 +223,58 @@
       <span>© Resident Computer</span>
       <span>@resicomp</span>
     </footer>
+
+    <script>
+      (function () {
+        const form = document.querySelector("[data-signup]");
+        if (!form) return;
+        const input = form.querySelector(".signup-input");
+        const button = form.querySelector("[data-signup-button]");
+        const defaultLabel = button.textContent.trim();
+
+        function setLabel(text, { disable = true } = {}) {
+          button.textContent = text;
+          button.disabled = disable;
+        }
+
+        function reset(delay = 2800) {
+          setTimeout(() => {
+            button.textContent = defaultLabel;
+            button.disabled = false;
+          }, delay);
+        }
+
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const email = (input.value || "").trim();
+          if (!email) return;
+
+          setLabel("Sending…");
+
+          try {
+            const res = await fetch("/api/subscribe", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email }),
+            });
+            const data = await res.json().catch(() => ({}));
+
+            if (res.ok && data.ok) {
+              setLabel(data.alreadySubscribed ? "You're already in" : "You're in", {
+                disable: true,
+              });
+              input.value = "";
+              reset();
+            } else {
+              setLabel(data.error || "Try again", { disable: false });
+              reset(3500);
+            }
+          } catch (err) {
+            setLabel("Try again", { disable: false });
+            reset(3500);
+          }
+        });
+      })();
+    </script>
   </body>
 </html>

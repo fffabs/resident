@@ -43,3 +43,16 @@ Without the files, the page falls back to the system sans-serif stack.
 
 The `tools/` folder contains the source HTML used to render the PNGs via
 headless Chrome.
+
+## Email signups
+
+The homepage form posts to `/api/subscribe`, a Vercel serverless function
+that forwards the email to a [Loops](https://loops.so/) audience.
+
+Required env var (set in Vercel → Settings → Environment Variables):
+
+| Name | Value |
+|---|---|
+| `LOOPS_API_KEY` | API key from loops.so → Settings → API |
+
+See `.env.example` for the local file format.

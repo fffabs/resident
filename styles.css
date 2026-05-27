@@ -453,6 +453,12 @@ a {
   filter: brightness(1.05);
 }
 
+.signup-button:disabled {
+  cursor: default;
+  opacity: 0.85;
+  filter: none;
+}
+
 /* ---------- Roadmap timeline ---------- */
 
 .timeline {

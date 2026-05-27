@@ -12,3 +12,8 @@ skills/
 assets/fonts/**/*.eot
 assets/fonts/**/*.ttf
 assets/fonts/**/*.svg
+
+# Local env values — keys go in Vercel env vars, never in the repo.
+.env
+.env.local
+.env.*.local
