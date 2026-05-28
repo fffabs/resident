@@ -10,24 +10,30 @@
       content="Create a small, living AI computer from your data."
     />
 
+    <link rel="canonical" href="https://www.resident.computer/" />
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
     <meta name="theme-color" content="#ffffff" />
     <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
 
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.resident.computer/" />
+    <meta property="og:site_name" content="Resident" />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:title" content="Resident — AI that lives with your data" />
     <meta property="og:description" content="Build a small, owned AI computer from your data. Versioned, testable, runs where you choose." />
-    <meta property="og:image" content="https://resident.computer/assets/og.png" />
+    <meta property="og:image" content="https://www.resident.computer/assets/og.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Resident — AI that lives with your data." />
 
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@resicomp" />
     <meta name="twitter:title" content="Resident — AI that lives with your data" />
     <meta name="twitter:description" content="Build a small, owned AI computer from your data. Versioned, testable, runs where you choose." />
-    <meta name="twitter:image" content="https://resident.computer/assets/og.png" />
+    <meta name="twitter:image" content="https://www.resident.computer/assets/og.jpg" />
 
     <link rel="stylesheet" href="styles.css" />
     <link
@@ -44,6 +50,17 @@
       type="font/woff2"
       crossorigin
     />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Resident",
+        "url": "https://www.resident.computer/",
+        "logo": "https://www.resident.computer/assets/apple-touch-icon.png",
+        "sameAs": ["https://x.com/resicomp"]
+      }
+    </script>
   </head>
   <body>
     <svg
@@ -54,6 +71,8 @@
       focusable="false"
     >
       <defs>
+        <!-- NOTE: #goo-mark is duplicated verbatim in roadmap.html and
+             investors.html (no build step). Edit all three together. -->
         <filter id="goo-mark" x="-20%" y="-20%" width="140%" height="140%">
           <feGaussianBlur in="SourceGraphic" stdDeviation="1.6" />
           <feColorMatrix
@@ -194,7 +213,9 @@
           <input
             type="email"
             name="email"
+            id="signup-email"
             placeholder="Email address"
+            aria-label="Email address"
             class="signup-input"
             autocomplete="email"
             required
@@ -203,6 +224,7 @@
           <button type="submit" class="signup-button" data-signup-button>
             Be first in line
           </button>
+          <p class="signup-status" role="status" aria-live="polite" data-signup-status></p>
         </form>
       </section>
     </main>
@@ -221,9 +243,9 @@
         <span class="illustration-island" aria-hidden="true">
           <img
             src="assets/island.webp"
-            alt="A floating island holding a glowing portal."
-            width="1773"
-            height="952"
+            alt=""
+            width="1456"
+            height="782"
             loading="lazy"
             decoding="async"
           />
@@ -243,29 +265,40 @@
         if (!form) return;
         const input = form.querySelector(".signup-input");
         const button = form.querySelector("[data-signup-button]");
+        const status = form.querySelector("[data-signup-status]");
         const defaultLabel = button.textContent.trim();
+        let resetTimer = null;
+        let submitting = false;
 
-        function setLabel(text, { disable = true } = {}) {
+        function setState(text, { disable = true } = {}) {
           button.textContent = text;
           button.disabled = disable;
+          if (status) status.textContent = text;
         }
 
-        function reset(delay = 2800) {
-          setTimeout(() => {
+        function scheduleReset(delay = 2800) {
+          clearTimeout(resetTimer);
+          resetTimer = setTimeout(() => {
             button.textContent = defaultLabel;
             button.disabled = false;
+            if (status) status.textContent = "";
           }, delay);
         }
 
         form.addEventListener("submit", async (event) => {
           event.preventDefault();
+          if (submitting) return;
           const email = (input.value || "").trim();
           if (!email) return;
 
-          setLabel("Sending…");
+          submitting = true;
+          clearTimeout(resetTimer);
+          setState("Sending…");
 
           try {
-            const body = new URLSearchParams({ email, userGroup: "Prelaunch" });
+            // Read the form's own fields (incl. the hidden userGroup) so the
+            // markup stays the single source of truth.
+            const body = new URLSearchParams(new FormData(form));
             const res = await fetch(form.action, {
               method: "POST",
               headers: {
@@ -277,20 +310,22 @@
             const message = (data && data.message) || "";
 
             if (res.ok && data && data.success !== false) {
-              setLabel("You're in", { disable: true });
+              setState("You're in", { disable: true });
               input.value = "";
-              reset();
+              scheduleReset();
             } else if (/already/i.test(message)) {
-              setLabel("You're already in", { disable: true });
+              setState("You're already in", { disable: true });
               input.value = "";
-              reset();
+              scheduleReset();
             } else {
-              setLabel(message || "Try again", { disable: false });
-              reset(3500);
+              setState(message || "Try again", { disable: false });
+              scheduleReset(3500);
             }
           } catch (err) {
-            setLabel("Try again", { disable: false });
-            reset(3500);
+            setState("Try again", { disable: false });
+            scheduleReset(3500);
+          } finally {
+            submitting = false;
           }
         });
       })();
