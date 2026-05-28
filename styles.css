@@ -678,12 +678,15 @@ a {
   }
 
   .timeline::before {
+    /* 1px axis centred on the dot column's centre (24px / 2 = 12px) */
     left: 12px;
-    transform: none;
+    transform: translateX(-0.5px);
   }
 
   .timeline-item {
-    grid-template-columns: 28px 1fr;
+    /* Col 1 is 24px so its centre (12px) lands on the axis; the dot is
+       centred in it, so the line runs through the dot's middle. */
+    grid-template-columns: 24px 1fr;
     grid-template-rows: auto auto;
     column-gap: 12px;
     row-gap: 2px;
@@ -693,9 +696,9 @@ a {
   .timeline-dot {
     grid-column: 1;
     grid-row: 2;
-    justify-self: end;
+    justify-self: center;
     align-self: center;
-    margin-right: 7px;
+    margin-right: 0;
   }
 
   .timeline-date,
