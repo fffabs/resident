@@ -139,7 +139,7 @@
         </p>
 
         <div class="chips" role="list">
-          <span class="chip" role="listitem">
+          <span class="chip" role="listitem" tabindex="0" aria-describedby="tip-query">
             <span class="chip-bg chip-bg-ring" aria-hidden="true">
               <span class="bg-circle"></span><span class="bg-pill"></span>
             </span>
@@ -153,8 +153,9 @@
               </svg>
             </span>
             <span class="chip-label">Query them</span>
+            <span class="chip-tip" role="tooltip" id="tip-query">Ask it questions in plain language. Answers come from your data, and nothing else.</span>
           </span>
-<span class="chip" role="listitem">
+          <span class="chip" role="listitem" tabindex="0" aria-describedby="tip-connect">
             <span class="chip-bg chip-bg-ring" aria-hidden="true">
               <span class="bg-circle"></span><span class="bg-pill"></span>
             </span>
@@ -168,8 +169,9 @@
               </svg>
             </span>
             <span class="chip-label">Connect them</span>
+            <span class="chip-tip" role="tooltip" id="tip-connect">Wire it into your stack over a simple API, so your own apps and tools can call it.</span>
           </span>
-<span class="chip" role="listitem">
+          <span class="chip" role="listitem" tabindex="0" aria-describedby="tip-deploy">
             <span class="chip-bg chip-bg-ring" aria-hidden="true">
               <span class="bg-circle"></span><span class="bg-pill"></span>
             </span>
@@ -182,8 +184,9 @@
               </svg>
             </span>
             <span class="chip-label">Deploy them</span>
+            <span class="chip-tip" role="tooltip" id="tip-deploy">Run it where your data already lives: a laptop, a private cloud, or an air-gapped server.</span>
           </span>
-<span class="chip" role="listitem">
+          <span class="chip" role="listitem" tabindex="0" aria-describedby="tip-download">
             <span class="chip-bg chip-bg-ring" aria-hidden="true">
               <span class="bg-circle"></span><span class="bg-pill"></span>
             </span>
@@ -196,6 +199,7 @@
               </svg>
             </span>
             <span class="chip-label">Download them</span>
+            <span class="chip-tip" role="tooltip" id="tip-download">Take the whole model with you — yours to keep and run offline.</span>
           </span>
         </div>
 

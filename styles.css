@@ -312,6 +312,69 @@ a {
   height: 28px;
   isolation: isolate;
   color: var(--chip-stroke);
+  cursor: help;
+}
+
+/* Cute pink tooltip — a short explainer per chip, on hover or keyboard focus.
+   Kept light pink in both color schemes so it reads like a floating note. */
+.chip-tip {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  z-index: 5;
+  width: max-content;
+  max-width: 210px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: #fff0fb;
+  color: #3a1133;
+  border: 1px solid var(--chip-stroke);
+  box-shadow: 0 10px 26px rgba(var(--accent-rgb), 0.28);
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  text-align: left;
+  white-space: normal;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+/* downward pointer (a rotated square so the pink border carries onto it) */
+.chip-tip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background: #fff0fb;
+  border-right: 1px solid var(--chip-stroke);
+  border-bottom: 1px solid var(--chip-stroke);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.chip:hover .chip-tip,
+.chip:focus .chip-tip,
+.chip:focus-visible .chip-tip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* The tooltip itself is the focus indicator, so skip the rectangular ring. */
+.chip:focus,
+.chip:focus-visible {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip-tip {
+    transition: none;
+  }
 }
 
 .chip-bg {
@@ -939,5 +1002,20 @@ a {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
+  }
+  /* Chips stack on the left here, so anchor tooltips to the chip's left edge
+     (not centered) to keep them from clipping past the screen. */
+  .chip-tip {
+    left: 0;
+    transform: translateX(0) translateY(4px);
+    max-width: min(280px, 80vw);
+  }
+  .chip:hover .chip-tip,
+  .chip:focus .chip-tip,
+  .chip:focus-visible .chip-tip {
+    transform: translateX(0) translateY(0);
+  }
+  .chip-tip::after {
+    left: 22px;
   }
 }
