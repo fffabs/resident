@@ -753,14 +753,45 @@ a {
   display: block;
 }
 
-.illustration-frame img {
+/* Clouds = the still base layer. It sets the frame's height. */
+.illustration-clouds {
   display: block;
   width: 100%;
   height: auto;
   user-select: none;
 }
 
-/* Animated magenta glow positioned over the portal in the illustration.
+/* Island = the floating foreground layer, overlaid on the clouds.
+   It bobs gently via `island-float`. The portal glow lives inside it,
+   so the glow drifts up and down with the island. */
+.illustration-island {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  pointer-events: none;
+  animation: island-float 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+.illustration-island img {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+}
+
+@keyframes island-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.6%);
+  }
+}
+
+/* Animated magenta glow positioned over the portal.
    `mix-blend-mode: screen` adds light to the underlying pixels (rather than
    covering them), so the glow reads as bloom emanating from the portal itself. */
 .portal-glow {
@@ -797,6 +828,9 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .illustration-island {
+    animation: none;
+  }
   .portal-glow {
     animation: none;
     opacity: 0.85;

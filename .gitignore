@@ -17,3 +17,7 @@ assets/fonts/**/*.svg
 .env
 .env.local
 .env.*.local
+
+# Source illustration layers — the optimised .webp versions are committed
+assets/Clouds.png
+assets/Island.png
