@@ -748,27 +748,35 @@ a {
   display: block;
 }
 
+/* The frame recreates the original ~1856×1040 scene box. The island is
+   anchored to the top, the cloud band to the bottom (behind it), so the
+   island reads as hovering above the mist. */
 .illustration-frame {
   position: relative;
   display: block;
+  aspect-ratio: 1856 / 1040;
 }
 
-/* Clouds = the still base layer. It sets the frame's height. */
+/* Clouds = the still mist band, pinned to the bottom, behind the island. */
 .illustration-clouds {
-  display: block;
+  position: absolute;
+  left: 0;
+  bottom: 0;
   width: 100%;
   height: auto;
+  z-index: 0;
   user-select: none;
 }
 
-/* Island = the floating foreground layer, overlaid on the clouds.
-   It bobs gently via `island-float`. The portal glow lives inside it,
-   so the glow drifts up and down with the island. */
+/* Island = the floating foreground layer. Centered and scaled to its native
+   share of the scene width (1773/1856 ≈ 95.5%). It bobs gently via
+   `island-float`; the portal glow lives inside it, so the glow drifts too. */
 .illustration-island {
   position: absolute;
-  left: 0;
   top: 0;
-  width: 100%;
+  left: 50%;
+  width: 95.5%;
+  z-index: 1;
   pointer-events: none;
   animation: island-float 7s ease-in-out infinite;
   will-change: transform;
@@ -784,10 +792,10 @@ a {
 @keyframes island-float {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translate(-50%, 0);
   }
   50% {
-    transform: translateY(-1.6%);
+    transform: translate(-50%, -1.6%);
   }
 }
 
