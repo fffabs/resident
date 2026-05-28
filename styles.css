@@ -484,6 +484,12 @@ a {
   white-space: nowrap;
 }
 
+.signup-note {
+  margin: 10px 2px 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
 /* ---------- Roadmap timeline ---------- */
 
 .timeline {
